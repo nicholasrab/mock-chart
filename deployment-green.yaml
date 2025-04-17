@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mock-chart.fullname" . }}-green
+  labels:
+    app: {{ include "mock-chart.name" . }}
+    version: {{ if eq .Values.activeDeployment "green" }}active{{ else }}inactive{{ end }}
+    cost-center: "mock-chart"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mock-chart.name" . }}
+      track: green
+  template:
+    metadata:
+      labels:
+        app: {{ include "mock-chart.name" . }}
+        track: green
+        version: {{ if eq .Values.activeDeployment "green" }}active{{ else }}inactive{{ end }}
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20

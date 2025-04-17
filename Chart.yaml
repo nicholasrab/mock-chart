@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mock-chart
+description: A mock Helm chart demonstrating Blue/Green deployment with HPA and cost annotations.
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
